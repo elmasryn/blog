@@ -1,0 +1,44 @@
+
+/*********************** Image profile **************************************/
+.file-upload{
+	height:183px;
+	width:183px;
+	margin:10px auto;
+	border-radius:20px;
+	overflow:hidden;
+	position:relative;
+}
+.file-upload .file {
+    margin-top: -35%;
+    width:183px;
+    border: none;
+    border-radius: 0;
+    font-size: 15px;
+    background: #212529b8;
+}
+.file-upload input{
+	position:absolute;
+	height:183px;
+	width:183px;
+	left:-1px;
+	top:-1px;
+	background:transparent;
+	opacity:0;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);  
+}
+.file-upload img{
+	height:183px;
+	width:183px;
+}
+
+/*********************** Statistics **************************************/
+.small-box .icon>i{
+	right:40%; 
+}
+
+/*********************** ckeditor **************************************/
+/*pages_create,*/
+.row .ck{
+	height:400px;
+}
