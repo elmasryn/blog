@@ -130,6 +130,7 @@ class GetPostController extends Controller
      */
     public function store(Request $request)
     {
+        //dd(storage_path('thumbnail'));
         if (Gate::any(['admin', 'editor'])) {
             $data = $request->validate([
                 'title'     => 'required|min:3|max:255',
@@ -297,7 +298,7 @@ class GetPostController extends Controller
         $allTags       = Tag::pluck('name', 'id');
 
         if (Gate::any(['admin', 'owner'], $editPost)) {
-            return view('postEdit', compact('allCategories', 'mostTags', 'allTags','editPost'));
+            return view('postEdit', compact('allCategories', 'mostTags', 'allTags', 'editPost'));
         } else
             return abort(403);
     }
@@ -336,6 +337,49 @@ class GetPostController extends Controller
         //         $editComment->status = '0';
         //     if ($editComment->save())
         //         return redirect(url('posts/' . $editComment->post->slug . '#comment' . $id))->with('success', trans('lang.The Comment has been updated successfully'));
+        // }
+
+
+
+
+        //     $data = $request->validate([
+        //         'title_en' => 'required|max:255',
+        //         'title_ar' => 'required|max:255',
+        //         'body'     => 'required|min:3',
+        //         'status'   => ['nullable', Rule::in(['0', '1'])],
+        //     ], [], [
+        //         'title_en' => trans('lang.Title page name by English'),
+        //         'title_ar' => trans('lang.Title page name by Arabic'),
+        //         'body'     => trans('lang.Body'),
+        //         'status'   => trans('lang.Status'),
+        //     ]);
+
+        //     $editPage = Page::findOrFail($id);
+
+        //     if ($data['title_en'] != $editPage->title_en)
+        //         $isSlugChanged = 'yes';
+        //     else
+        //         $isSlugChanged = 'no';
+
+
+        //     $editPage->title_en = $data['title_en'];
+        //     $editPage->title_ar = $data['title_ar'];
+        //     $editPage->body     = $data['body'];
+        //     $editPage->status   = $data['status'];
+
+        //     if ($isSlugChanged == 'yes') {
+        //         $slug       = Str::slug($editPage->title_en, '-');
+        //         $count      = Page::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
+        //         $checkSlugs = Page::where('slug', "{$slug}-{$count}")->first();
+
+        //         if ($checkSlugs === Null)
+        //             $editPage->slug = $count ? "{$slug}-{$count}" : $slug;
+        //         else
+        //             $editPage->slug = "{$slug}-{$count}" . time();
+        //     }
+
+        //     if ($editPage->save())
+        //         return redirect(adminurl('pages'))->with('success', trans('lang.The Page has been updated successfully'));
         // }
     }
 

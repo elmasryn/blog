@@ -109,8 +109,8 @@ class PageController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'title_en' => 'required_without:title_ar|max:255',
-            'title_ar' => 'required_without:title_en|max:255',
+            'title_en' => 'required|max:255',
+            'title_ar' => 'required|max:255',
             'body'     => 'required|min:3',
             'status'   => ['nullable', Rule::in(['0', '1'])],
         ], [], [
@@ -121,27 +121,28 @@ class PageController extends Controller
         ]);
 
         $editPage = Page::findOrFail($id);
-        if ($data['title_en'] == Null)
-            $editPage->title_en = $data['title_ar'];
-        else
-            $editPage->title_en = $data['title_en'];
 
-        if ($data['title_ar'] == Null)
-            $editPage->title_ar = $data['title_en'];
+        if ($data['title_en'] != $editPage->title_en)
+            $isSlugChanged = 'yes';
         else
-            $editPage->title_ar = $data['title_ar'];
+            $isSlugChanged = 'no';
 
+
+        $editPage->title_en = $data['title_en'];
+        $editPage->title_ar = $data['title_ar'];
         $editPage->body     = $data['body'];
         $editPage->status   = $data['status'];
 
-        $slug       = Str::slug($editPage->title_en, '-');
-        $count      = Page::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-        $checkSlugs = Page::where('slug', "{$slug}-{$count}")->first();
+        if ($isSlugChanged == 'yes') {
+            $slug       = Str::slug($editPage->title_en, '-');
+            $count      = Page::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
+            $checkSlugs = Page::where('slug', "{$slug}-{$count}")->first();
 
-        if ($checkSlugs === Null)
-            $editPage->slug = $count ? "{$slug}-{$count}" : $slug;
-        else
-            $editPage->slug = "{$slug}-{$count}" . time();
+            if ($checkSlugs === Null)
+                $editPage->slug = $count ? "{$slug}-{$count}" : $slug;
+            else
+                $editPage->slug = "{$slug}-{$count}" . time();
+        }
 
         if ($editPage->save())
             return redirect(adminurl('pages'))->with('success', trans('lang.The Page has been updated successfully'));
