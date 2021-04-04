@@ -101,8 +101,8 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'title_en' => 'required_without:title_ar|max:255',
-            'title_ar' => 'required_without:title_en|max:255',
+            'title_en' => 'required|max:255',
+            'title_ar' => 'required|max:255',
             'desc_en'  => 'nullable',
             'desc_ar'  => 'nullable',
             'status'   => ['nullable', Rule::in(['0', '1'])],
@@ -114,28 +114,26 @@ class CategoryController extends Controller
             'status'   => trans('lang.Status'),
         ]);
         $editCategory = Category::findOrFail($id);
-        if ($data['title_en'] == Null)
-            $editCategory->title_en = $data['title_ar'];
+        if ($data['title_en'] == $editCategory->title_en)
+            $isSlugChanged = 'no';
         else
-            $editCategory->title_en = $data['title_en'];
+            $isSlugChanged = 'yes';
 
-        if ($data['title_ar'] == Null)
-            $editCategory->title_ar = $data['title_en'];
-        else
-            $editCategory->title_ar = $data['title_ar'];
-
+        $editCategory->title_en = $data['title_en'];
+        $editCategory->title_ar = $data['title_ar'];
         $editCategory->desc_en  = $data['desc_en'];
         $editCategory->desc_ar  = $data['desc_ar'];
         $editCategory->status   = $data['status'];
 
-        $slug       = Str::slug($editCategory->title_en, '-');
-        $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-        $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
-        if ($checkSlugs === Null)
-            $editCategory->slug = $count ? "{$slug}-{$count}" : $slug;
-        else
-            $editCategory->slug = "{$slug}-{$count}" . time();
-
+        if ($isSlugChanged == 'yes') {
+            $slug       = Str::slug($editCategory->title_en, '-');
+            $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
+            $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
+            if ($checkSlugs === Null)
+                $editCategory->slug = $count ? "{$slug}-{$count}" : $slug;
+            else
+                $editCategory->slug = "{$slug}-{$count}" . time();
+        }
         if ($editCategory->save())
             return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been updated successfully'));
     }

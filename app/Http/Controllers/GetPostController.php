@@ -337,6 +337,47 @@ class GetPostController extends Controller
         //     if ($editComment->save())
         //         return redirect(url('posts/' . $editComment->post->slug . '#comment' . $id))->with('success', trans('lang.The Comment has been updated successfully'));
         // }
+
+
+    //     $data = $request->validate([
+    //         'title_en' => 'required|max:255',
+    //         'title_ar' => 'required|max:255',
+    //         'desc_en'  => 'nullable',
+    //         'desc_ar'  => 'nullable',
+    //         'status'   => ['nullable', Rule::in(['0', '1'])],
+    //     ], [], [
+    //         'title_en' => trans('lang.Title name by English'),
+    //         'title_ar' => trans('lang.Title name by Arabic'),
+    //         'desc_en'  => trans('lang.Desc name by English'),
+    //         'desc_ar'  => trans('lang.Desc name by Arabic'),
+    //         'status'   => trans('lang.Status'),
+    //     ]);
+    //     $editCategory = Category::findOrFail($id);
+    //     if ($data['title_en'] == $editCategory->title_en)
+    //         $isSlugChanged = 'no';
+    //     else
+    //         $isSlugChanged = 'yes';
+
+    //     $editCategory->title_en = $data['title_en'];
+    //     $editCategory->title_ar = $data['title_ar'];
+    //     $editCategory->desc_en  = $data['desc_en'];
+    //     $editCategory->desc_ar  = $data['desc_ar'];
+    //     $editCategory->status   = $data['status'];
+
+    //     if ($isSlugChanged == 'yes') {
+    //         $slug       = Str::slug($editCategory->title_en, '-');
+    //         $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
+    //         $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
+    //         if ($checkSlugs === Null)
+    //             $editCategory->slug = $count ? "{$slug}-{$count}" : $slug;
+    //         else
+    //             $editCategory->slug = "{$slug}-{$count}" . time();
+    //     }
+    //     if ($editCategory->save())
+    //         return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been updated successfully'));
+    // }
+
+
     }
 
     /**
