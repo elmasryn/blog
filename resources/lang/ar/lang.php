@@ -140,6 +140,7 @@ return [
     'Published'                  => 'معلن',
     'Not Published'              => 'غير معلن',
     'Edit category'              => 'تعديل القسم',
+    'No posts in current time'   => 'لا يوجد مواضيع فى الوقت الحالي',
     //Page
     'The pages'                  => 'الصفحات',
     'Are you sure to delete the page' => 'هل متأكد من حذف صفحة :page',

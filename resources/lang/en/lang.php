@@ -140,6 +140,7 @@ return [
     'Published'                  => 'Published',
     'Not Published'              => 'Not Published',
     'Edit category'              => 'Edit category',
+    'No posts in current time'   => 'No posts in current time',
     //Page
     'The pages'                  => 'The pages',
     'Are you sure to delete the page' => 'Are you sure to delete the page :page',

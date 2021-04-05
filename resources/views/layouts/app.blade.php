@@ -248,6 +248,7 @@
         </div>
         <!-- Footer Links -->
 
+        @guest
         <hr>
 
         <!-- Call to action -->
@@ -260,6 +261,7 @@
             </li>
         </ul>
         <!-- Call to action -->
+        @endguest
 
         <hr>
 
@@ -320,7 +322,7 @@
 
         <!-- Copyright -->
         <div class="footer-copyright text-center py-3">© 2020 {{ __('lang.Copyright') }}:
-            <a href="elmasry_n@hotmail.com">Mohamed El Masry </a>
+            <a href="mailto:elmasry_n@hotmail.com">Mohamed El Masry </a>
         </div>
         <!-- Copyright -->
 
@@ -344,5 +346,5 @@
 
     @include('alerts')
 </body>
-
+{{-- copyright reserved to elmasry_n@hotmail.com --}}
 </html>

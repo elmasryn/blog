@@ -31,7 +31,7 @@
                     @endif
                 </div>
                 @endforeach
-                <div class="mt-4 mx-auto">{{$categories->links()}}</div>
+                <div class="mt-4 w-100 d-flex justify-content-center">{{$categories->links()}}</div>
                 @endif
             </div>
 

@@ -126,7 +126,7 @@ switch to another branch: git checkout ""master""
 push changes to github
 git add .
 git commit -m "Add existing file"
-git push origin your-branch
+git push -u origin master
 
 
 
@@ -148,7 +148,7 @@ now()
 unique visitor package
 mistake in design css
 
-check register in footer & trying to get slug in non object when delet or edit or create comment & add message if no posts in cat & cat pagination & sort cat in cp
+
 update insert (editor + tags + select2) & go edit comment directly from cp
 all image sizable  & intend redirect after login or logout 
 posted related for user & send unpublish status in cpanel to get action for comments and posts & comments for only users or users and guests?

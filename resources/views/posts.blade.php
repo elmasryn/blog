@@ -93,6 +93,10 @@
             <hr class="my-4">
             @endif
             @endforeach
+            @else
+            <div class="alert alert-danger" role="alert">
+                <strong>{{trans('lang.No posts in current time')}}</strong>
+            </div>
             @endif
 
             <div class="d-flex justify-content-center">{{$posts->withQueryString()->links()}}</div>
