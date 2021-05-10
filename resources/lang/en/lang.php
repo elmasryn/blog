@@ -140,7 +140,6 @@ return [
     'Published'                  => 'Published',
     'Not Published'              => 'Not Published',
     'Edit category'              => 'Edit category',
-    'No posts in current time'   => 'No posts in current time',
     //Page
     'The pages'                  => 'The pages',
     'Are you sure to delete the page' => 'Are you sure to delete the page :page',
@@ -251,6 +250,7 @@ return [
     //Category
     'Ads'                        => 'Advertisments',
     'The most tags used'         => 'The most tags used',
+    'No posts in current time'   => 'No posts in current time',
     //Post
     'Posted on'                  => 'Posted on',
     'Describtion'                => 'Describtion',
@@ -262,6 +262,7 @@ return [
     'Add new Post'               => 'Add new Post',
     'The post is under review and has not been published yet' => 'The post is under review and has not been published yet',
     'The post now is'            => 'The post now is',
+    'Edit Post'                  => 'Edit Post',
     //comments
     'Edit'                       => 'Edit',
     'Publish'                    => 'Publish',

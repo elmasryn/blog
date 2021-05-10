@@ -140,7 +140,6 @@ return [
     'Published'                  => 'معلن',
     'Not Published'              => 'غير معلن',
     'Edit category'              => 'تعديل القسم',
-    'No posts in current time'   => 'لا يوجد مواضيع فى الوقت الحالي',
     //Page
     'The pages'                  => 'الصفحات',
     'Are you sure to delete the page' => 'هل متأكد من حذف صفحة :page',
@@ -252,6 +251,7 @@ return [
     //Category
     'Ads'                        => 'إعلانات',
     'The most tags used'         => 'أكثر الأوسمة المستخدمة',
+    'No posts in current time'   => 'لا يوجد مواضيع فى الوقت الحالي',
     //Post
     'Posted on'                  => 'حرر فى',
     'Describtion'                => 'وصف القسم',
@@ -263,6 +263,7 @@ return [
     'Add new Post'               => 'اضافة موضوع جديد',
     'The post is under review and has not been published yet' => 'المقال قيد المراجعة ولم يتم نشرة حتى الان',
     'The post now is'            => 'المقال الأن',
+    'Edit Post'                  => 'تعديل المقال',
     //comments
     'Edit'                       => 'تحرير',
     'Publish'                    => 'أوافق على النشر',

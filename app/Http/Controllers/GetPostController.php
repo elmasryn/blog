@@ -291,13 +291,32 @@ class GetPostController extends Controller
      */
     public function edit($id)
     {
-        $editPost = Post::with('category', 'tags')->findOrFail($id);
-        $allCategories = Category::select('id', 'title_en', 'title_ar', 'slug')->get();
-        $mostTags      = Tag::withCount('posts')->orderBy('posts_count', 'desc')->take(35)->get();
-        $allTags       = Tag::pluck('name', 'id');
+        $post = Post::with(['tags:id,name,slug', 'category:id,title_en,title_ar'])->select('id', 'category_id', 'title', 'body', 'thumbnail', 'status', 'slug')->findOrFail($id);
+        $wholeCategories = Category::withoutGlobalScope('status')->select('id', 'title_en', 'title_ar')->get();
+        $allCategories   = Category::select('id', 'title_en', 'title_ar', 'slug')->get();
 
-        if (Gate::any(['admin', 'owner'], $editPost)) {
-            return view('postEdit', compact('allCategories', 'mostTags', 'allTags','editPost'));
+        $tags = $post->tags->pluck('slug', 'name');
+
+        $relatedPosts   = Post::with('tags:name,slug')
+            ->where('id', '!=', $id)
+            ->where('status', '1')
+            ->select('id', 'title', 'slug')
+            ->whereHas('tags', function ($query) use ($tags) {
+                $query->whereIn('slug', $tags);
+            })->take(10)->get();
+
+        $relatedTags = [];
+        foreach ($relatedPosts as $relatedPost) {
+            foreach ($relatedPost->tags->pluck('name', 'slug') as $tagSlug => $tagName) {
+                $relatedTags[$tagSlug] = $tagName;
+            }
+        };
+        $relatedTags = array_unique($relatedTags);
+
+        $allTags         = Tag::pluck('name', 'id');
+
+        if (Gate::any(['admin', 'owner'], $post)) {
+            return view('postEdit', compact('wholeCategories', 'allCategories', 'relatedPosts', 'relatedTags', 'allTags', 'post'));
         } else
             return abort(403);
     }
@@ -312,18 +331,92 @@ class GetPostController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (Gate::any(['admin', 'ownerTime'])) {
+        /* test */
+
+        // $collection = collect([
+        //     'Apple' => [
+        //         [
+        //             'name' => 'iPhone 6S',
+        //             'brand' => 'Apple'
+        //         ],
+        //     ],
+        //     'Samsung' => [
+        //         [
+        //             'name' => 'Galaxy S7',
+        //             'brand' => 'Samsung'
+        //         ],
+        //     ],
+        // ]);
+        
+        // $products = $collection->flatten(1);
+        
+        
+
+        // dd($products->all());
+
+        /* end test */
+
+        $editPost = Post::findOrFail($id);
+        if (Gate::any(['admin', 'ownerTime'], $editPost)) {
+            $data = $request->validate([
+                'title'     => 'required|min:3|max:255',
+                'body'      => 'required|min:3',
+                'category'  => ['required', 'exists:categories,id'],
+                'status'    => ['nullable', Rule::in(['0', '1'])],
+                'thumbnail' => 'nullable|image|mimes:bmp,gif,jp2,jpeg,jpg,jpe,png|max:2048',
+                'tags'      => 'required|array|max:255',
+            ], [], [
+                'title'     => trans('lang.Post title'),
+                'body'      => trans('lang.Body'),
+                'category'  => trans('lang.The Category'),
+                'status'    => trans('lang.Status'),
+                'thumbnail' => trans('lang.Image'),
+                'tags'      => trans('lang.The tags'),
+            ]);
+
+            if ($data['title'] == $editPost->title)
+                $isSlugChanged = 'no';
+            else
+                $isSlugChanged = 'yes';
+
+            $editPost->title       = $data['title'];
+            $editPost->body        = $data['body'];
+            $editPost->category_id = $data['category'];
+
+            if (
+                setting()->post_publish_status == 0 &&
+                count(auth()->user()->roles->pluck('name')->intersect('Admin')) == 0
+            )
+                $editPost->status = '0';
+
+            if ($isSlugChanged == 'yes') {
+                $slug       = Str::slug($editPost->title, '-');
+                $count      = Post::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
+                $checkSlugs = Post::where('slug', "{$slug}-{$count}")->first();
+                if ($checkSlugs === Null)
+                    $editPost->slug = $count ? "{$slug}-{$count}" : $slug;
+                else
+                    $editPost->slug = "{$slug}-{$count}" . time();
+            }
+
+            if ($editPost->save()) {
+                $editPost->tags()->sync($data['tags']);
+                // $editPost->tags()->sync((array)$request->input('tags'));
+                return redirect(url('posts/' . $editPost->slug))->with('success', trans('lang.The Post has been updated successfully'));
+            }
         } else
             return abort(403);
+
+
+
+
+
+
+
+
         // $article = Article::findOrFail($id);
         // $article->update($request->all());
         // $article->tag()->sync((array)$request->input('tag'));
-
-        // $data = $request->validate([
-        //     'body' => 'required|string|min:3|max:1000',
-        // ], [], [
-        //     'body' => trans('lang.Body'),
-        // ]);
 
         // $editComment = Comment::with('post:id,slug')->select('id', 'body', 'status', 'post_id', 'user_id', 'created_at')->findOrFail($id);
         // if (Gate::any(['admin', 'ownerTime'], $editComment)) {
@@ -339,43 +432,22 @@ class GetPostController extends Controller
         // }
 
 
-    //     $data = $request->validate([
-    //         'title_en' => 'required|max:255',
-    //         'title_ar' => 'required|max:255',
-    //         'desc_en'  => 'nullable',
-    //         'desc_ar'  => 'nullable',
-    //         'status'   => ['nullable', Rule::in(['0', '1'])],
-    //     ], [], [
-    //         'title_en' => trans('lang.Title name by English'),
-    //         'title_ar' => trans('lang.Title name by Arabic'),
-    //         'desc_en'  => trans('lang.Desc name by English'),
-    //         'desc_ar'  => trans('lang.Desc name by Arabic'),
-    //         'status'   => trans('lang.Status'),
-    //     ]);
-    //     $editCategory = Category::findOrFail($id);
-    //     if ($data['title_en'] == $editCategory->title_en)
-    //         $isSlugChanged = 'no';
-    //     else
-    //         $isSlugChanged = 'yes';
 
-    //     $editCategory->title_en = $data['title_en'];
-    //     $editCategory->title_ar = $data['title_ar'];
-    //     $editCategory->desc_en  = $data['desc_en'];
-    //     $editCategory->desc_ar  = $data['desc_ar'];
-    //     $editCategory->status   = $data['status'];
 
-    //     if ($isSlugChanged == 'yes') {
-    //         $slug       = Str::slug($editCategory->title_en, '-');
-    //         $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-    //         $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
-    //         if ($checkSlugs === Null)
-    //             $editCategory->slug = $count ? "{$slug}-{$count}" : $slug;
-    //         else
-    //             $editCategory->slug = "{$slug}-{$count}" . time();
-    //     }
-    //     if ($editCategory->save())
-    //         return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been updated successfully'));
-    // }
+        //     $editPost->status   = $data['status'];
+
+        //     if ($isSlugChanged == 'yes') {
+        //         $slug       = Str::slug($editPost->title, '-');
+        //         $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
+        //         $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
+        //         if ($checkSlugs === Null)
+        //             $editPost->slug = $count ? "{$slug}-{$count}" : $slug;
+        //         else
+        //             $editPost->slug = "{$slug}-{$count}" . time();
+        //     }
+        //     if ($editPost->save())
+        //         return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been updated successfully'));
+        // }
 
 
     }
