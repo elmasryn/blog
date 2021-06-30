@@ -21,7 +21,10 @@ class GetPageController extends Controller
      */
     public function show($slug)
     {
-        $id   = Page::where('slug', $slug)->where('status', '1')->pluck('id')->first();
+        if (auth()->check() && count(auth()->user()->roles->pluck('name')->intersect('Admin')) > 0)
+            $id   = Page::where('slug', $slug)->pluck('id')->first();
+        else
+            $id   = Page::where(['slug' => $slug, 'status' => '1'])->pluck('id')->first();
 
         $page = Page::select('id', 'title_en', 'title_ar', 'body', 'slug', 'created_at', 'updated_at')
             ->findOrFail($id);
@@ -39,5 +42,4 @@ class GetPageController extends Controller
         $allCategories = Category::select('title_en', 'title_ar', 'slug')->get();
         return view('page', compact('page', 'allPages', 'mostTags', 'allCategories', 'keywords'));
     }
-
 }

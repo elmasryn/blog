@@ -252,6 +252,7 @@ return [
     'Ads'                        => 'إعلانات',
     'The most tags used'         => 'أكثر الأوسمة المستخدمة',
     'No posts in current time'   => 'لا يوجد مواضيع فى الوقت الحالي',
+    'This category is not active' => 'هذا القسم غير مفعل',
     //Post
     'Posted on'                  => 'حرر فى',
     'Describtion'                => 'وصف القسم',

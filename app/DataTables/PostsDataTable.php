@@ -77,7 +77,7 @@ class PostsDataTable extends DataTable
             )
             ->addColumn(
                 'edit',
-                '<a href="{{ url("posts/".$slug."/edit")}}" target="_blank" class="btn btn-info btn-sm d-flex flex-nowrap"><i class="fas fa-edit mr-1 my-auto"></i> {{ __("lang.Edit") }}</a>'
+                '<a href="{{ url("posts/".$id."/edit")}}" target="_blank" class="btn btn-info btn-sm d-flex flex-nowrap"><i class="fas fa-edit mr-1 my-auto"></i> {{ __("lang.Edit") }}</a>'
             )
             ->addColumn(
                 'delete',

@@ -148,7 +148,7 @@ unique visitor package
 
 
 
-check authorization to edit post inside unpublished category & check update insert (editor + tags + select2) & update from admin control link & check update email with unique & check edit for unpublished posts & go edit comment directly from cp
+go edit comment directly from cp & check authServiceProvider ownerTime issue with guest
 all image sizable  & intend redirect after login or logout 
 posted related for user & send unpublish status in cpanel to get action for comments and posts & comments for only users or users and guests?
 test & upload to server

@@ -251,6 +251,7 @@ return [
     'Ads'                        => 'Advertisments',
     'The most tags used'         => 'The most tags used',
     'No posts in current time'   => 'No posts in current time',
+    'This category is not active' => 'This category is not active',
     //Post
     'Posted on'                  => 'Posted on',
     'Describtion'                => 'Describtion',

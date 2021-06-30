@@ -31,15 +31,28 @@ class GetPostController extends Controller
     {
         if (request('category')) {
 
-            $category = Category::select('id', 'title_en', 'title_ar', 'desc_en', 'desc_ar')->where('slug', request('category'))->firstOrFail();
-            $posts    = Post::with(['user:id,name', 'tags:name,slug'])
-                ->select('id', 'title', 'body', 'slug', 'thumbnail', 'created_at', 'user_id', 'category_id')
-                ->withCount(['comments' => function ($query) {
-                    $query->where('status', '1');
-                }])
-                ->where(['status' => '1', 'category_id' => $category->id])
-                ->orderBy('id', 'desc')
-                ->pagination();
+            if (auth()->check() && count(auth()->user()->roles->pluck('name')->intersect('Admin')) > 0) {
+                $category = Category::withoutGlobalScope('status')->select('id', 'title_en', 'title_ar', 'desc_en', 'desc_ar', 'status')->where('slug', request('category'))->firstOrFail();
+                $posts    = Post::withoutGlobalScope('status')->with(['user:id,name', 'tags:name,slug'])
+                    ->select('id', 'title', 'body', 'slug', 'thumbnail', 'created_at', 'user_id', 'category_id')
+                    ->withCount(['comments' => function ($query) {
+                        $query->where('status', '1');
+                    }])
+                    ->where(['status' => '1', 'category_id' => $category->id])
+                    ->orderBy('id', 'desc')
+                    ->pagination();
+            } else {
+                $category = Category::select('id', 'title_en', 'title_ar', 'desc_en', 'desc_ar')->where('slug', request('category'))->firstOrFail();
+                $posts    = Post::with(['user:id,name', 'tags:name,slug'])
+                    ->select('id', 'title', 'body', 'slug', 'thumbnail', 'created_at', 'user_id', 'category_id')
+                    ->withCount(['comments' => function ($query) {
+                        $query->where('status', '1');
+                    }])
+                    ->where(['status' => '1', 'category_id' => $category->id])
+                    ->orderBy('id', 'desc')
+                    ->pagination();
+            }
+
 
             $relatedTags   = Tag::select('name', 'slug')->whereHas('posts.category', function ($query) {
                 $query->where('slug', request('category'));
@@ -291,7 +304,7 @@ class GetPostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::with(['tags:id,name,slug', 'category:id,title_en,title_ar'])->select('id', 'category_id', 'title', 'body', 'thumbnail', 'status', 'slug')->findOrFail($id);
+        $post = Post::withoutGlobalScope('status')->with(['tags:id,name,slug', 'category:id,title_en,title_ar'])->select('id', 'category_id', 'user_id', 'title', 'body', 'thumbnail', 'status', 'slug')->findOrFail($id);
         $wholeCategories = Category::withoutGlobalScope('status')->select('id', 'title_en', 'title_ar')->get();
         $allCategories   = Category::select('id', 'title_en', 'title_ar', 'slug')->get();
 
@@ -333,30 +346,21 @@ class GetPostController extends Controller
     {
         /* test */
 
-        // $collection = collect([
-        //     'Apple' => [
-        //         [
-        //             'name' => 'iPhone 6S',
-        //             'brand' => 'Apple'
-        //         ],
-        //     ],
-        //     'Samsung' => [
-        //         [
-        //             'name' => 'Galaxy S7',
-        //             'brand' => 'Samsung'
-        //         ],
-        //     ],
-        // ]);
-        
-        // $products = $collection->flatten(1);
-        
-        
 
-        // dd($products->all());
+        // $data = [
+        //     'products' => [
+        //         ['name' => 'Desk 1', 'price' => 100],
+        //         ['name' => 'Desk 2'],
+        //     ],
+        // ];
+
+        // $test = url()->previous();
+
+        // dd($test);
 
         /* end test */
 
-        $editPost = Post::findOrFail($id);
+        $editPost = Post::withoutGlobalScope('status')->findOrFail($id);
         if (Gate::any(['admin', 'ownerTime'], $editPost)) {
             $data = $request->validate([
                 'title'     => 'required|min:3|max:255',
@@ -401,54 +405,10 @@ class GetPostController extends Controller
 
             if ($editPost->save()) {
                 $editPost->tags()->sync($data['tags']);
-                // $editPost->tags()->sync((array)$request->input('tags'));
                 return redirect(url('posts/' . $editPost->slug))->with('success', trans('lang.The Post has been updated successfully'));
             }
         } else
             return abort(403);
-
-
-
-
-
-
-
-
-        // $article = Article::findOrFail($id);
-        // $article->update($request->all());
-        // $article->tag()->sync((array)$request->input('tag'));
-
-        // $editComment = Comment::with('post:id,slug')->select('id', 'body', 'status', 'post_id', 'user_id', 'created_at')->findOrFail($id);
-        // if (Gate::any(['admin', 'ownerTime'], $editComment)) {
-        //     $editComment->body = $data['body'];
-        //     if (
-        //         setting()->comment_publish_status == 0 &&
-        //         ((auth()->check() && count(auth()->user()->roles->pluck('name')->intersect('Admin')) == 0)
-        //             or auth()->guest())
-        //     )
-        //         $editComment->status = '0';
-        //     if ($editComment->save())
-        //         return redirect(url('posts/' . $editComment->post->slug . '#comment' . $id))->with('success', trans('lang.The Comment has been updated successfully'));
-        // }
-
-
-
-
-        //     $editPost->status   = $data['status'];
-
-        //     if ($isSlugChanged == 'yes') {
-        //         $slug       = Str::slug($editPost->title, '-');
-        //         $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-        //         $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
-        //         if ($checkSlugs === Null)
-        //             $editPost->slug = $count ? "{$slug}-{$count}" : $slug;
-        //         else
-        //             $editPost->slug = "{$slug}-{$count}" . time();
-        //     }
-        //     if ($editPost->save())
-        //         return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been updated successfully'));
-        // }
-
 
     }
 
