@@ -344,22 +344,6 @@ class GetPostController extends Controller
 
     public function update(Request $request, $id)
     {
-        /* test */
-
-
-        // $data = [
-        //     'products' => [
-        //         ['name' => 'Desk 1', 'price' => 100],
-        //         ['name' => 'Desk 2'],
-        //     ],
-        // ];
-
-        // $test = url()->previous();
-
-        // dd($test);
-
-        /* end test */
-
         $editPost = Post::withoutGlobalScope('status')->findOrFail($id);
         if (Gate::any(['admin', 'ownerTime'], $editPost)) {
             $data = $request->validate([
