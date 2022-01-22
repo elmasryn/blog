@@ -13,21 +13,21 @@
     <link rel="icon" href="{{optional(setting())->icon}}">
 
     <!-- fonts -->
-    <link href="{{url('')}}/dist/fonts/fonts.googleapis.css" rel="stylesheet">
+    <link href="{{asset('')}}/dist/fonts/fonts.googleapis.css" rel="stylesheet">
 
     <!-- fontawesome -->
-    <link rel="stylesheet" href="{{url('')}}/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="{{asset('')}}/plugins/fontawesome-free/css/all.min.css">
 
     @if (App::isLocale('en'))
     <!-- English bootstrap style -->
-    <link href="{{ url('dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('dist/css/bootstrap.min.css') }}" rel="stylesheet">
     @else
     <!-- Arabic bootstrap style -->
-    <link href="{{ url('dist/css/bootstrap.arabic.css') }}" rel="stylesheet">
+    <link href="{{ asset('dist/css/bootstrap.arabic.css') }}" rel="stylesheet">
     @endif
 
     <!-- Custom style -->
-    <link href="{{ url('css/mystyle.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/mystyle.css') }}" rel="stylesheet">
 
     @stack('css')
     <!-- Styles -->
@@ -331,16 +331,16 @@
     <!-- Footer -->
 
     <!-- jQuery -->
-    <script src="{{url('')}}/js/jquery.min.js"></script>
+    <script src="{{asset('')}}/js/jquery.min.js"></script>
 
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> --}}
 
-    <script src="{{url('')}}/dist/js/bootstrap.js"></script>
+    <script src="{{asset('')}}/dist/js/bootstrap.js"></script>
 
     <!-- sweetalert2 -->
-    <script src="{{url('')}}/plugins/sweetalert2/sweetalert2@9.js"></script>
+    <script src="{{asset('')}}/plugins/sweetalert2/sweetalert2@9.js"></script>
 
-    <script src="{{url('')}}/js/my.js"></script>
+    <script src="{{asset('')}}/js/my.js"></script>
 
     @stack('js')
 
