@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('css')
-<link href="{{ url('css/profile.css') }}" rel="stylesheet">
+<link href="/css/profile.css" rel="stylesheet">
 @endpush
 
 @section('title' , '| '.__('lang.Edit profile'))

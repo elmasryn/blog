@@ -1,5 +1,5 @@
 @push('css')
-    <link href="{{ url('css/comments.css') }}" rel="stylesheet">
+    <link href="/css/comments.css" rel="stylesheet">
 @endpush
 <div class="container">
 

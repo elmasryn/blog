@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('css')
-<link href="{{ url('css/contactUs.css') }}" rel="stylesheet">
+<link href="/css/contactUs.css" rel="stylesheet">
 @endpush
 
 @section('title' , '| '.__('lang.Contact us'))

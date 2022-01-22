@@ -20,14 +20,14 @@
 
     @if (App::isLocale('en'))
     <!-- English bootstrap style -->
-    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/dist/css/bootstrap.min.css" rel="stylesheet">
     @else
     <!-- Arabic bootstrap style -->
-    <link href="dist/css/bootstrap.arabic.css" rel="stylesheet">
+    <link href="/dist/css/bootstrap.arabic.css" rel="stylesheet">
     @endif
 
     <!-- Custom style -->
-    <link href="css/mystyle.css" rel="stylesheet">
+    <link href="/css/mystyle.css" rel="stylesheet">
 
     @stack('css')
     <!-- Styles -->

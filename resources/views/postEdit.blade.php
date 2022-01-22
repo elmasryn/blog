@@ -3,7 +3,7 @@
 @section('title', '| ' . trans('lang.Edit Post'))
 
     @push('css')
-        <link href="{{ url('select2-4.1.0/dist/css/select2.min.css') }}" rel="stylesheet" />
+        <link href="/select2-4.1.0/dist/css/select2.min.css" rel="stylesheet" />
     @endpush
 
 @section('content')
@@ -209,8 +209,8 @@
 @endsection
 
 @push('js')
-    <script src="{{ url('ckeditor4/ckeditor.js') }}"> </script>
-    <script src="{{ url('select2-4.1.0/dist/js/select2.min.js') }}"></script>
+    <script src="/ckeditor4/ckeditor.js"> </script>
+    <script src="/select2-4.1.0/dist/js/select2.min.js"></script>
     <script>
         CKEDITOR.replace('body', {
             contentsCss: 'body{background-color: #F1AB30;}'
