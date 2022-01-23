@@ -175,8 +175,8 @@ class GetPostController extends Controller
                 $newPost->status = '0';
 
             $slug = Str::slug($newPost->title, '-');
-            $count = $newPost->where('slug', 'LIKE',"{$slug}%")->count();
-            $newPost->slug = $count ? $slug.'-'.time() : $slug;
+            $count = $newPost->where('slug', 'LIKE', "{$slug}%")->count();
+            $newPost->slug = $count ? $slug . '-' . time() : $slug;
 
             if ($request->hasFile('thumbnail')) {
                 $thumbnailName = time() . '.' . $request->thumbnail->getClientOriginalExtension();
@@ -192,8 +192,8 @@ class GetPostController extends Controller
                 $newTag = Tag::firstOrNew(['name' => strtolower(trim($tagName))]);
                 if (Tag::where('name', $newTag->name)->first() === Null) {
                     $tagSlug = Str::slug($newTag->name, '-');
-                    $tagCount = $newTag->where('slug', 'LIKE',"{$tagSlug}%")->count();
-                    $newTag->slug = $tagCount ? $tagSlug.'-'.time() : $tagSlug;
+                    $tagCount = $newTag->where('slug', 'LIKE', "{$tagSlug}%")->count();
+                    $newTag->slug = $tagCount ? $tagSlug . '-' . time() : $tagSlug;
                 }
 
                 if ($newTag->save())
@@ -370,8 +370,8 @@ class GetPostController extends Controller
 
             if ($isSlugChanged == 'yes') {
                 $slug       = Str::slug($editPost->title, '-');
-                $count      = Post::where('slug', 'LIKE',"{$slug}%")->where('id', '!=', $id)->count();
-                $editPost->slug = $count ? $slug.'-'.time() : $slug;
+                $count      = Post::where('slug', 'LIKE', "{$slug}%")->where('id', '!=', $id)->count();
+                $editPost->slug = $count ? $slug . '-' . time() : $slug;
             }
 
             if ($editPost->save()) {
@@ -380,7 +380,6 @@ class GetPostController extends Controller
             }
         } else
             return abort(403);
-
     }
 
     /**
