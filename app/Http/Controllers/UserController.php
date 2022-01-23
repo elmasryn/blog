@@ -175,7 +175,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $deleteUser = User::findOrFail($id);
+        $deleteUser = User::where('id','!=','1')->findOrFail($id);
         if (isset($deleteUser->profile->avatar)) {
             $currentLocationImgAsArray = explode('/', $deleteUser->profile->avatar);
             Storage::delete('image/' . end($currentLocationImgAsArray));
@@ -188,7 +188,7 @@ class UserController extends Controller
     {
         $checked = request('checked');
         if ($checked > 0) {
-            $users = User::with('profile')->whereIn('id', $checked);
+            $users = User::with('profile')->where('id','!=','1')->whereIn('id', $checked);
             foreach ($users->get() as $user) {
                 if (isset($user->profile->avatar)) {
                     $currentLocationImgAsArray = explode('/', $user->profile->avatar);
