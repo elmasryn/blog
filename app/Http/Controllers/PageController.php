@@ -65,12 +65,8 @@ class PageController extends Controller
         $newPage->status    = $data['status'];
 
         $slug = Str::slug($newPage->title_en, '-');
-        $count = $newPage->whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-        $checkSlugs = Page::where('slug', "{$slug}-{$count}")->first();
-        if ($checkSlugs === Null)
-            $newPage->slug = $count ? "{$slug}-{$count}" : $slug;
-        else
-            $newPage->slug = "{$slug}-{$count}" . time();
+        $count = $newPage->where('slug', 'LIKE',"{$slug}%")->count();
+        $newPage->slug = $count ? $slug.'-'.time() : $slug;
 
         if ($newPage->save())
             return redirect(adminurl('pages'))->with('success', trans('lang.The Page has been stored successfully'));
@@ -133,13 +129,8 @@ class PageController extends Controller
 
         if ($isSlugChanged == 'yes') {
             $slug       = Str::slug($editPage->title_en, '-');
-            $count      = Page::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-            $checkSlugs = Page::where('slug', "{$slug}-{$count}")->first();
-
-            if ($checkSlugs === Null)
-                $editPage->slug = $count ? "{$slug}-{$count}" : $slug;
-            else
-                $editPage->slug = "{$slug}-{$count}" . time();
+            $count      = Page::where('slug', 'LIKE',"{$slug}%")->where('id', '!=', $id)->count();
+            $editPage->slug = $count ? $slug.'-'.time() : $slug;
         }
 
         if ($editPage->save())

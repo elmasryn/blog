@@ -47,12 +47,8 @@ class TagController extends Controller
         $newTag->name   = $data['name'];
 
         $slug = Str::slug($newTag->name, '-');
-        $count = $newTag->whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-        $checkSlugs = Tag::where('slug', "{$slug}-{$count}")->first();
-        if($checkSlugs === Null)
-            $newTag->slug = $count ? "{$slug}-{$count}" : $slug;
-        else
-            $newTag->slug = "{$slug}-{$count}".time();
+        $count = $newTag->where('slug', 'LIKE',"{$slug}%")->count();
+        $newTag->slug = $count ? $slug.'-'.time() : $slug;
 
         if ($newTag->save())
             return redirect(adminurl('tags'))->with('success', trans('lang.The Tag has been stored successfully'));
@@ -87,14 +83,9 @@ class TagController extends Controller
         $editTag       = Tag::findOrFail($id);
         $editTag->name = $data['name'];
 
-        $slug       = Str::slug($editTag->name, '-');
-        $count      = Tag::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-        $checkSlugs = Tag::where('slug', "{$slug}-{$count}")->first();
-
-        if($checkSlugs === Null)
-            $editTag->slug = $count ? "{$slug}-{$count}" : $slug;
-        else
-            $editTag->slug = "{$slug}-{$count}".time();
+        $slug           = Str::slug($editTag->name, '-');
+        $count          = Tag::where('slug', 'LIKE',"{$slug}%")->where('id', '!=', $id)->count();
+        $editTag->slug  = $count ? $slug.'-'.time() : $slug;
 
         if ($editTag->save())
             return redirect(adminurl('tags'))->with('success', trans('lang.The Tag has been updated successfully'));

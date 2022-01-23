@@ -68,12 +68,8 @@ class CategoryController extends Controller
         $newCategory->status    = $data['status'];
 
         $slug = Str::slug($newCategory->title_en, '-');
-        $count = $newCategory->whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-        $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
-        if ($checkSlugs === Null)
-            $newCategory->slug = $count ? "{$slug}-{$count}" : $slug;
-        else
-            $newCategory->slug = "{$slug}-{$count}" . time();
+        $count = $newCategory->where('slug', 'LIKE',"{$slug}%")->count();
+        $newCategory->slug = $count ? $slug.'-'.time() : $slug;
 
         if ($newCategory->save())
             return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been stored successfully'));
@@ -127,12 +123,8 @@ class CategoryController extends Controller
 
         if ($isSlugChanged == 'yes') {
             $slug       = Str::slug($editCategory->title_en, '-');
-            $count      = Category::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-            $checkSlugs = Category::where('slug', "{$slug}-{$count}")->first();
-            if ($checkSlugs === Null)
-                $editCategory->slug = $count ? "{$slug}-{$count}" : $slug;
-            else
-                $editCategory->slug = "{$slug}-{$count}" . time();
+            $count      = Category::where('slug', 'LIKE',"{$slug}%")->where('id', '!=', $id)->count();
+            $editCategory->slug = $count ? $slug.'-'.time() : $slug;
         }
         if ($editCategory->save())
             return redirect(adminurl('categories'))->with('success', trans('lang.The Category has been updated successfully'));

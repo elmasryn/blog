@@ -175,12 +175,8 @@ class GetPostController extends Controller
                 $newPost->status = '0';
 
             $slug = Str::slug($newPost->title, '-');
-            $count = $newPost->whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-            $checkSlugs = Post::where('slug', "{$slug}-{$count}")->first();
-            if ($checkSlugs === Null)
-                $newPost->slug = $count ? "{$slug}-{$count}" : $slug;
-            else
-                $newPost->slug = "{$slug}-{$count}" . time();
+            $count = $newPost->where('slug', 'LIKE',"{$slug}%")->count();
+            $newPost->slug = $count ? $slug.'-'.time() : $slug;
 
             if ($request->hasFile('thumbnail')) {
                 $thumbnailName = time() . '.' . $request->thumbnail->getClientOriginalExtension();
@@ -194,15 +190,10 @@ class GetPostController extends Controller
             $tagIds = [];
             foreach ($data['tags'] as $tagName) {
                 $newTag = Tag::firstOrNew(['name' => strtolower(trim($tagName))]);
-                // $newTag->name   = strtolower(trim($tagName));
                 if (Tag::where('name', $newTag->name)->first() === Null) {
                     $tagSlug = Str::slug($newTag->name, '-');
-                    $tagCount = $newTag->whereRaw("slug RLIKE '^{$tagSlug}(-[0-9]+)?$'")->count();
-                    $checkTagSlugs = Tag::where('slug', "{$tagSlug}-{$tagCount}")->first();
-                    if ($checkTagSlugs === Null)
-                        $newTag->slug = $tagCount ? "{$tagSlug}-{$tagCount}" : $tagSlug;
-                    else
-                        $newTag->slug = "{$tagSlug}-{$tagCount}" . time();
+                    $tagCount = $newTag->where('slug', 'LIKE',"{$tagSlug}%")->count();
+                    $newTag->slug = $tagCount ? $tagSlug.'-'.time() : $tagSlug;
                 }
 
                 if ($newTag->save())
@@ -379,12 +370,8 @@ class GetPostController extends Controller
 
             if ($isSlugChanged == 'yes') {
                 $slug       = Str::slug($editPost->title, '-');
-                $count      = Post::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->where('id', '!=', $id)->count();
-                $checkSlugs = Post::where('slug', "{$slug}-{$count}")->first();
-                if ($checkSlugs === Null)
-                    $editPost->slug = $count ? "{$slug}-{$count}" : $slug;
-                else
-                    $editPost->slug = "{$slug}-{$count}" . time();
+                $count      = Post::where('slug', 'LIKE',"{$slug}%")->where('id', '!=', $id)->count();
+                $editPost->slug = $count ? $slug.'-'.time() : $slug;
             }
 
             if ($editPost->save()) {
