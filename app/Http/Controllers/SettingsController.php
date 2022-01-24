@@ -6,6 +6,7 @@ use App\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
 
 class SettingsController extends Controller
 {
@@ -64,13 +65,21 @@ class SettingsController extends Controller
 
         if ($request->hasFile('icon')) {
             $imageName = time() . '.' . $request->icon->extension();
-            $currentLocationImgAsArray = explode('/', setting()->icon);
-            Storage::delete('icon/' . end($currentLocationImgAsArray));
+            if(isset($newSetting->icon)){
+                $currentLocationImgAsArray = explode('/', setting()->icon);
+                if(Str::length(end($currentLocationImgAsArray)) > 5)
+                    Storage::delete('icon/' . end($currentLocationImgAsArray));
+            }
             if (!in_array('icon', Storage::directories()))
                 Storage::makeDirectory('icon');
+            // for inside filesystems
             Image::make($request->file('icon'))->resize(40, 40)
-                ->save(public_path('storage/icon/' . $imageName));
-            $newSetting->icon = 'storage/icon/' . $imageName;
+                ->save(public_path('img/icon/' . $imageName));
+            $newSetting->icon = 'img/icon/' . $imageName;
+            // for public (storage) filesystems
+            // Image::make($request->file('icon'))->resize(40, 40)
+            //     ->save(public_path('storage/icon/' . $imageName));
+            // $newSetting->icon = 'storage/icon/' . $imageName;
         }
 
         if ($newSetting->save())

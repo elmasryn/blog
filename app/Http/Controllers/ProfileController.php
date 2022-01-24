@@ -9,6 +9,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -22,7 +23,7 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        $user       = User::with('profile','roles')->findOrFail($id);
+        $user       = User::with('profile', 'roles')->findOrFail($id);
         $roleName   = $user->roles->map(function ($role) {
             return $role->name;
         })->implode(' & ');
@@ -37,7 +38,7 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
-        $user       = User::with('profile','roles')->findOrFail($id);
+        $user       = User::with('profile', 'roles')->findOrFail($id);
         $roleName   = $user->roles->map(function ($role) {
             return $role->name;
         })->implode(' & ');
@@ -80,14 +81,19 @@ class ProfileController extends Controller
                 $imageName = time() . '.' . $request->image->extension();
                 if (isset($editUser->profile->avatar)) {
                     $currentLocationImgAsArray = explode('/', $editUser->profile->avatar);
-                    Storage::delete('image/' . end($currentLocationImgAsArray));
+                    if(Str::length(end($currentLocationImgAsArray)) > 5)
+                        Storage::delete('image/' . end($currentLocationImgAsArray));
                 }
                 if (!in_array('image', Storage::directories()))
                     Storage::makeDirectory('image');
-                    
+                // for inside filesystems
                 Image::make($request->file('image'))->resize(183, 183)
-                    ->save(public_path('storage/image/' . $imageName));
-                $editUser->profile->avatar = 'storage/image/' . $imageName;
+                    ->save(public_path('img/image/' . $imageName));
+                $editUser->profile->avatar = 'img/image/' . $imageName;
+                // for public (storage) filesystems    
+                // Image::make($request->file('image'))->resize(183, 183)
+                //     ->save(public_path('storage/image/' . $imageName));
+                // $editUser->profile->avatar = 'storage/image/' . $imageName;
             }
 
             if ($editUser->push()) {

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'public'),
+    'default' => env('FILESYSTEM_DRIVER', 'inside'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +55,14 @@ return [
             'visibility' => 'public',
         ],
 
+        // elmasry (to use with heroku)
+        'inside' => [
+            'driver' => 'local',
+            'root' => public_path('img'),
+            'url' => env('APP_URL'),
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -78,8 +86,8 @@ return [
     |
     */
 
-    'links' => [
-        public_path('storage') => storage_path('app/public'),
-    ],
+    // 'links' => [
+    //     public_path('storage') => storage_path('app/public'),
+    // ],
 
 ];

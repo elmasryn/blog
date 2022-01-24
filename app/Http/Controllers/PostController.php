@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\PostsDataTable;
 use App\Post;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -38,7 +39,8 @@ class PostController extends Controller
             }
             if (isset($deletePost->thumbnail)) {
                 $currentLocationImgAsArray = explode('/', $deletePost->thumbnail);
-                Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
+                if(Str::length(end($currentLocationImgAsArray)) > 5)
+                    Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
             }
             return back()->with('success', trans('lang.The Post has been deleted successfully'));
         }
@@ -61,7 +63,8 @@ class PostController extends Controller
 
                     if (isset($post->thumbnail)) {
                         $currentLocationImgAsArray = explode('/', $post->thumbnail);
-                        Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
+                        if(Str::length(end($currentLocationImgAsArray)) > 5)
+                            Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
                     }
                 }
                 if ($posts->delete())

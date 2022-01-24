@@ -182,9 +182,14 @@ class GetPostController extends Controller
                 $thumbnailName = time() . '.' . $request->thumbnail->getClientOriginalExtension();
                 if (!in_array('thumbnail', Storage::directories()))
                     Storage::makeDirectory('thumbnail');
+                // for inside filesystems
                 Image::make($request->file('thumbnail'))->resize(1280, 800)
-                    ->save(public_path('storage/thumbnail/' . $thumbnailName));
-                $newPost->thumbnail = 'storage/thumbnail/' . $thumbnailName;
+                    ->save(public_path('img/thumbnail/' . $thumbnailName));
+                $newPost->thumbnail = 'img/thumbnail/' . $thumbnailName;
+                // for public (storage) filesystems
+                // Image::make($request->file('thumbnail'))->resize(1280, 800)
+                //     ->save(public_path('storage/thumbnail/' . $thumbnailName));
+                // $newPost->thumbnail = 'storage/thumbnail/' . $thumbnailName;
             }
 
             $tagIds = [];
@@ -374,6 +379,25 @@ class GetPostController extends Controller
                 $editPost->slug = $count ? $slug . '-' . time() : $slug;
             }
 
+            if ($request->hasFile('thumbnail')) {
+                $thumbnailName = time() . '.' . $request->thumbnail->getClientOriginalExtension();
+                if (!in_array('thumbnail', Storage::directories()))
+                    Storage::makeDirectory('thumbnail');
+                if (isset($editPost->thumbnail)) {
+                    $currentLocationImgAsArray = explode('/', $editPost->thumbnail);
+                    if(Str::length(end($currentLocationImgAsArray)) > 5)
+                        Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
+                }
+                // for inside filesystems
+                Image::make($request->file('thumbnail'))->resize(1280, 800)
+                    ->save(public_path('img/thumbnail/' . $thumbnailName));
+                $editPost->thumbnail = 'img/thumbnail/' . $thumbnailName;
+                // for public (storage) filesystems
+                // Image::make($request->file('thumbnail'))->resize(1280, 800)
+                //     ->save(public_path('storage/thumbnail/' . $thumbnailName));
+                // $editPost->thumbnail = 'storage/thumbnail/' . $thumbnailName;
+            }
+
             if ($editPost->save()) {
                 $editPost->tags()->sync($data['tags']);
                 return redirect(url('posts/' . $editPost->slug))->with('success', trans('lang.The Post has been updated successfully'));
@@ -401,10 +425,11 @@ class GetPostController extends Controller
                 }
                 if (isset($deletePost->thumbnail)) {
                     $currentLocationImgAsArray = explode('/', $deletePost->thumbnail);
-                    Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
+                    if(Str::length(end($currentLocationImgAsArray)) > 5)
+                        Storage::delete('thumbnail/' . end($currentLocationImgAsArray));
                 }
-                return redirect(url('posts'))->with('success', trans('lang.The Post has been deleted successfully'));
             }
+            return redirect(url('posts'))->with('success', trans('lang.The Post has been deleted successfully'));
         } else
             return abort(403);
     }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -74,9 +75,14 @@ class UserController extends Controller
             $imageName = time() . '.' . $request->image->extension();
             if (!in_array('image', Storage::directories()))
                 Storage::makeDirectory('image');
+            // for inside filesystems
             Image::make($request->file('image'))->resize(183, 183)
-                ->save(public_path('storage/image/' . $imageName));
-            $newUserProfile->setAttribute('avatar', 'storage/image/' . $imageName);
+                ->save(public_path('img/image/' . $imageName));
+            $newUserProfile->setAttribute('avatar', 'img/image/' . $imageName);
+            // for public (storage) filesystems
+            // Image::make($request->file('image'))->resize(183, 183)
+            //     ->save(public_path('storage/image/' . $imageName));
+            // $newUserProfile->setAttribute('avatar', 'storage/image/' . $imageName);
         }
 
         if ($newUser->profile()->save($newUserProfile)) {
@@ -104,7 +110,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user   = User::with('profile','roles')->findOrFail($id);
+        $user   = User::with('profile', 'roles')->findOrFail($id);
         $roles  = Role::pluck('name', 'id');
         return view(adminview('users_edit'), compact('user', 'roles'));
     }
@@ -148,13 +154,19 @@ class UserController extends Controller
             $imageName = time() . '.' . $request->image->extension();
             if (isset($editUser->profile->avatar)) {
                 $currentLocationImgAsArray = explode('/', $editUser->profile->avatar);
-                Storage::delete('image/' . end($currentLocationImgAsArray));
+                if(Str::length(end($currentLocationImgAsArray)) > 5)
+                    Storage::delete('image/' . end($currentLocationImgAsArray));
             }
             if (!in_array('image', Storage::directories()))
                 Storage::makeDirectory('image');
+            // for inside filesystems
             Image::make($request->file('image'))->resize(183, 183)
-                ->save(public_path('storage/image/' . $imageName));
-            $editUser->profile->avatar = 'storage/image/' . $imageName;
+                ->save(public_path('img/image/' . $imageName));
+            $editUser->profile->avatar = 'img/image/' . $imageName;
+            // for public (storage) filesystems
+            // Image::make($request->file('image'))->resize(183, 183)
+            //     ->save(public_path('storage/image/' . $imageName));
+            // $editUser->profile->avatar = 'storage/image/' . $imageName;
         }
 
         if ($editUser->push()) {
@@ -175,10 +187,11 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $deleteUser = User::where('id','!=','1')->findOrFail($id);
+        $deleteUser = User::where('id', '!=', '1')->findOrFail($id);
         if (isset($deleteUser->profile->avatar)) {
             $currentLocationImgAsArray = explode('/', $deleteUser->profile->avatar);
-            Storage::delete('image/' . end($currentLocationImgAsArray));
+            if(Str::length(end($currentLocationImgAsArray)) > 5)
+                Storage::delete('image/' . end($currentLocationImgAsArray));
         }
         if ($deleteUser->delete())
             return back()->with('success', trans('lang.The User has been deleted successfully'));
@@ -188,11 +201,12 @@ class UserController extends Controller
     {
         $checked = request('checked');
         if ($checked > 0) {
-            $users = User::with('profile')->where('id','!=','1')->whereIn('id', $checked);
+            $users = User::with('profile')->where('id', '!=', '1')->whereIn('id', $checked);
             foreach ($users->get() as $user) {
                 if (isset($user->profile->avatar)) {
                     $currentLocationImgAsArray = explode('/', $user->profile->avatar);
-                    Storage::delete('image/' . end($currentLocationImgAsArray));
+                    if(Str::length(end($currentLocationImgAsArray)) > 5)
+                        Storage::delete('image/' . end($currentLocationImgAsArray));
                 }
             }
             if ($users->delete())
