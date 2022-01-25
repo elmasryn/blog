@@ -1,8 +1,8 @@
-<button name="delete" class="btn btn-danger m-2" type="button" data-toggle="modal" data-target="#del{{ $post->id }}"><i
+<button name="delete" class="btn btn-danger m-2" type="button" data-toggle="modal" data-target="#delPost{{ $post->id }}"><i
         class="fas fa-trash-alt mr-1 my-auto"></i> {{ trans('lang.Delete') }}</button>
 
 <!-- Modal -->
-<div id="del{{ $post->id }}" tabindex="-1" class="modal fade" role="dialog" aria-labelledby="del" aria-hidden="true">
+<div id="delPost{{ $post->id }}" tabindex="-1" class="modal fade" role="dialog" aria-labelledby="del" aria-hidden="true">
     <div class="modal-dialog" role="document">
 
         <!-- Modal content-->

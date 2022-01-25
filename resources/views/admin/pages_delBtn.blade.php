@@ -1,9 +1,9 @@
 <button class="btn btn-danger btn-sm d-flex flex-nowrap" type="button" data-toggle="modal"
-    data-target="#del{{ $id }}"><i class="fas fa-trash-alt mr-1 my-auto"></i>
+    data-target="#delPage{{ $id }}"><i class="fas fa-trash-alt mr-1 my-auto"></i>
     {{ trans('lang.Delete') }}</button>
 
 <!-- Modal -->
-<div id="del{{ $id }}" tabindex="-1" class="modal fade" role="dialog" aria-labelledby="del" aria-hidden="true">
+<div id="delPage{{ $id }}" tabindex="-1" class="modal fade" role="dialog" aria-labelledby="del" aria-hidden="true">
     <div class="modal-dialog" role="document">
 
         <!-- Modal content-->

@@ -1,9 +1,9 @@
 <button name="delete" class="btn btn-danger btn-sm" type="button" data-toggle="modal"
-    data-target="#del{{ $comment->id }}">
+    data-target="#delComment{{ $comment->id }}">
     {{ trans('lang.Delete') }}</button>
 
 <!-- Modal -->
-<div id="del{{ $comment->id }}" tabindex="-1" class="modal fade" role="dialog" aria-labelledby="del" aria-hidden="true">
+<div id="delComment{{ $comment->id }}" tabindex="-1" class="modal fade" role="dialog" aria-labelledby="del" aria-hidden="true">
     <div class="modal-dialog" role="document">
 
         <!-- Modal content-->
