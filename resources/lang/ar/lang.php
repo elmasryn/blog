@@ -103,6 +103,7 @@ return [
     'Title name by Arabic'       => 'أسم القسم باللغة العربية',
     'Add'                        => 'أضف',
     'Edit Departments'           => 'تعديل الأقسام',
+    'Add Department'             => 'أضف قسم',
     'Are you sure to delete the department' => 'هل متأكد من حذف قسم :department ',
     'Close'                      => 'إغلاق',
     'Less than a minute ago'     => 'منذ أقل من دقيقة',

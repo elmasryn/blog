@@ -103,6 +103,7 @@ return [
     'Title name by Arabic'       => 'Title name by Arabic',
     'Add'                        => 'Add',
     'Edit Departments'           => 'Edit Departments',
+    'Add Department'             => 'Add Department',
     'Are you sure to delete the department' => 'Are you sure to delete the department :department',
     'Close'                      => 'Close',
     'Less than a minute ago'     => 'Less than a minute ago',
