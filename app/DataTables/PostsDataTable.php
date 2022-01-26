@@ -66,7 +66,7 @@ class PostsDataTable extends DataTable
             // ->editColumn('status', '{!! $status == 1 ? __("lang.Published") : __("lang.Not Published") !!}')
             ->filterColumn('status', function ($query, $keyword) {
                 $query->whereRaw(
-                    'IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", ""))',
+                    'IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
                     [trans("lang.Published"), '%' . $keyword . '%', trans("lang.Not Published"), '%' . $keyword . '%']
                 );
             })
