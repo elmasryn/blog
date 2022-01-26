@@ -20,7 +20,7 @@ class Post extends Model
     protected static function booted()
     {
         static::addGlobalScope('status', function (Builder $builder) {
-            if (!request()->is('admin/*'))
+            if (!request()->routeIs('admin/*'))
                 $builder->whereHas('category', function ($query) {
                     $query->where('status', '1');
                 });

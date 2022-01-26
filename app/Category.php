@@ -31,7 +31,7 @@ class Category extends Model
     protected static function booted()
     {
         static::addGlobalScope('status', function (Builder $builder) {
-            if (!request()->is('admin/*'))
+            if (!request()->routeIs('admin/*'))
                 $builder->where('status', '1');
         });
     }
