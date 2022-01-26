@@ -46,11 +46,18 @@ class CommentsDataTable extends DataTable
                 });
             })
             // ->editColumn('status', '{!! $status == 1 ? __("lang.Published") : __("lang.Not Published") !!}')
+            // only using with MYSQL
+            // ->filterColumn('status', function ($query, $keyword) {
+            //     $query->whereRaw(
+            //         'IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
+            //         [trans("lang.Published"), '%' . $keyword . '%', trans("lang.Not Published"), '%' . $keyword . '%']
+            //     );
+            // })
             ->filterColumn('status', function ($query, $keyword) {
-                $query->whereRaw(
-                    'IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
-                    [trans("lang.Published"), '%' . $keyword . '%', trans("lang.Not Published"), '%' . $keyword . '%']
-                );
+                if (stristr(__("lang.Published"), $keyword))
+                        $query->where('status', '1');
+                elseif (stristr(__("lang.Not Published"), $keyword))
+                        $query->where('status', '!=', '1');
             })
             ->editColumn('category', function ($model) {
                 return $model->post->category->title_en;

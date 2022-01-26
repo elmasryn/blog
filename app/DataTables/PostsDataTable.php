@@ -64,13 +64,19 @@ class PostsDataTable extends DataTable
             })
             ->editColumn('body', '{!! str_limit($body, 10) !!}')
             // ->editColumn('status', '{!! $status == 1 ? __("lang.Published") : __("lang.Not Published") !!}')
+            // only using with MYSQL
+            // ->filterColumn('status', function ($query, $keyword) {
+            //     $query->whereRaw(
+            //         'IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
+            //         [trans("lang.Published"), '%' . $keyword . '%', trans("lang.Not Published"), '%' . $keyword . '%']
+            //     );
+            // })
             ->filterColumn('status', function ($query, $keyword) {
-                $query->whereRaw(
-                    'IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
-                    [trans("lang.Published"), '%' . $keyword . '%', trans("lang.Not Published"), '%' . $keyword . '%']
-                );
+                if (stristr(__("lang.Published"), $keyword))
+                        $query->where('status', '1');
+                elseif (stristr(__("lang.Not Published"), $keyword))
+                        $query->where('status', '!=', '1');
             })
-
             ->addColumn(
                 'show',
                 '<a href="{{ url("posts/".$slug)}}" target="_blank" class="btn btn-primary btn-sm d-flex flex-nowrap"><i class="fas fa-eye mr-1 my-auto"></i> {{ __("lang.Show") }}</a>'

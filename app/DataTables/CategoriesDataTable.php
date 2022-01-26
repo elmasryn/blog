@@ -27,9 +27,16 @@ class CategoriesDataTable extends DataTable
             ->editColumn('desc_en', '{!! str_limit($desc_en, 50) !!}')
             ->editColumn('desc_ar', '{!! str_limit($desc_ar, 50) !!}')
             // ->editColumn('status', '{!! $status == 1 ? __("lang.Published") : __("lang.Not Published") !!}')
-            ->filterColumn('status', function($query, $keyword) {
-                $query->whereRaw('IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
-                 [trans("lang.Published") , '%'.$keyword.'%', trans("lang.Not Published") , '%'.$keyword.'%']);
+            // only using with MYSQL
+            // ->filterColumn('status', function($query, $keyword) {
+            //     $query->whereRaw('IF( ? LIKE ? , status = "1", IF( ? LIKE ? , status = "0", False))',
+            //      [trans("lang.Published") , '%'.$keyword.'%', trans("lang.Not Published") , '%'.$keyword.'%']);
+            // })
+            ->filterColumn('status', function ($query, $keyword) {
+                if (stristr(__("lang.Published"), $keyword))
+                        $query->where('status', '1');
+                elseif (stristr(__("lang.Not Published"), $keyword))
+                        $query->where('status', '!=', '1');
             })
             ->addColumn(
                 'show',
